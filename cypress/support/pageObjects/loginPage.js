@@ -1,7 +1,5 @@
 /// <reference types="cypress" />
 
-import validLoginCredentials from "../../fixtures/validLoginCredentials.json";
-
 export class loginPage {
 
     navigate() {
@@ -9,8 +7,12 @@ export class loginPage {
     }
 
     login() {
-        cy.get('#username').type(validLoginCredentials.userName)
-        cy.get('#password').type(validLoginCredentials.password)
+        // Credentials resolve through Cypress.env() so the same spec can run
+        // against demo defaults (cypress.json), a local override
+        // (cypress.env.json, gitignored), or CI env vars (CYPRESS_TEST_USER /
+        // CYPRESS_TEST_PASS). Nothing sensitive is committed.
+        cy.get('#username').type(Cypress.env('TEST_USER'))
+        cy.get('#password').type(Cypress.env('TEST_PASS'))
         }
 
     signIn() {
@@ -24,5 +26,5 @@ export class loginPage {
         cy.contains('Feedback Form').should('be.visible')
         }
     }
-    
+
 export default loginPage

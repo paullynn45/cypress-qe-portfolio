@@ -21,6 +21,16 @@ jobs:
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
+        env:
+          # Test credentials are injected here to demonstrate the standard CI
+          # pattern. In a real app these would come from GitHub Actions secrets:
+          #   CYPRESS_TEST_USER: ${{ secrets.TEST_USER }}
+          #   CYPRESS_TEST_PASS: ${{ secrets.TEST_PASS }}
+          # The app under test here validates client-side against a hard-coded
+          # pair, so there's no meaningful secret to protect — the values are
+          # shown literally to keep the pipeline self-contained.
+          CYPRESS_TEST_USER: l.jenkins
+          CYPRESS_TEST_PASS: hunter2
         with:
           start: npm start
           wait-on: 'http://localhost:3000'

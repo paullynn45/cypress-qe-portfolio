@@ -73,6 +73,10 @@ npm run cy:chrome       # all specs, headed Chrome
 npx cypress open        # interactive mode
 ```
 
+### Test credentials
+
+Tests read the sign-in credentials through `Cypress.env('TEST_USER')` / `Cypress.env('TEST_PASS')`. Demo defaults live in `cypress.json`. To run against different credentials without editing tracked files, copy `cypress.env.example.json` to `cypress.env.json` (gitignored) and set your own values — or export `CYPRESS_TEST_USER` / `CYPRESS_TEST_PASS` in your shell. CI injects them as env vars on the `cypress-io/github-action` step.
+
 ### Run via Docker
 
 ```bash
@@ -101,6 +105,8 @@ docker-compose up --build -d
 **Fixture-driven data.** Each scenario class points to one or more JSON fixtures in `cypress/fixtures/`. Adding a fourth invalid-data profile is a one-file change with no spec edits. The `availablefixtures.forEach` pattern in the unit specs runs the same test logic over every profile.
 
 **Custom commands over inline setup.** `cy.login()` (happy path, default fixture credentials) and `cy.loginAs(user, pass)` (explicit credentials, used by negative-path login tests) live in `cypress/support/commands.js`. Specs that need an authenticated session call them in `beforeEach` and stay focused on the scenario under test.
+
+**Credentials via `Cypress.env()`, not committed fixtures.** The login page object reads `TEST_USER` / `TEST_PASS` through `Cypress.env()` rather than importing a committed JSON fixture. Precedence order: `CYPRESS_TEST_USER` / `CYPRESS_TEST_PASS` OS env vars (injected in CI via the GitHub Actions workflow) override `cypress.env.json` (gitignored, for local dev), which overrides the demo defaults in `cypress.json`. In a real app, `cypress.json` would have no defaults and `cypress.env.json` or CI secrets would be the only source — and the server would validate against a hashed password, not a client-side string comparison like the demo does.
 
 **Semantic selectors over framework-generated class chains.** Earlier versions of these specs matched on Material-UI's auto-generated class strings (`MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom`) and on raw button text. Both are brittle to MUI upgrades and copy changes. Page objects now prefer stable component classes (`.signin-form__submit`) and `cy.contains()` against semantic content.
 

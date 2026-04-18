@@ -26,3 +26,6 @@ yarn-error.log*
 # cypress test artifacts
 cypress/videos/
 cypress/screenshots/
+
+# cypress local env overrides (test credentials per-environment)
+cypress.env.json
