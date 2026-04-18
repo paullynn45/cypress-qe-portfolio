@@ -1,9 +1,13 @@
+/// <reference types="cypress" />
+
 import loginPage from "../../support/pageObjects/loginPage";
+import feedbackPage from "../../support/pageObjects/feedbackPage";
 
 describe('End to End Journey Test Mandatory Fields Populated Only', () => {
     const login = new loginPage();
-    
-    it('Login Success', function ()       
+    const feedback = new feedbackPage();
+
+    it('Login Success', function ()
     {
         login.navigate()
         login.login()
@@ -11,15 +15,14 @@ describe('End to End Journey Test Mandatory Fields Populated Only', () => {
     })
 
     it('Form Submisson Success', () => {
-        cy.get('#firstname').type('Paul')
-        cy.get('#lastname').type('Lynn')
-        cy.get('#email').type('paul.lynn@test.com')
-        cy.get('#phone').type('07777777777')
-        cy.get('#postcode').type('WA14 1EP')
-        cy.get('#feedback').type('I am providing some feedback to the feedback field')
-        cy.get('#submit').click()
-        cy.get('[class="MuiTypography-root feedback__sent MuiTypography-h6"]').invoke('text').then( text => {
-            expect(text).to.equal('Thank you for your feedback')
-        })
+        feedback
+            .fillFirstName('Paul')
+            .fillLastName('Lynn')
+            .fillEmail('paul.lynn@test.com')
+            .fillPhone('07777777777')
+            .fillPostcode('WA14 1EP')
+            .fillFeedback('I am providing some feedback to the feedback field')
+            .submit()
+            .expectThankYouMessage()
     })
 })

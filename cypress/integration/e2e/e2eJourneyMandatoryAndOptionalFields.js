@@ -1,11 +1,13 @@
 /// <reference types="cypress" />
 
 import loginPage from "../../support/pageObjects/loginPage";
+import feedbackPage from "../../support/pageObjects/feedbackPage";
 
 describe('End to End Journey Test Both Mandatory and Optional Fields Populated', () => {
     const login = new loginPage();
+    const feedback = new feedbackPage();
 
-    it('Login Success', function ()       
+    it('Login Success', function ()
     {
         login.navigate()
         login.login()
@@ -13,17 +15,16 @@ describe('End to End Journey Test Both Mandatory and Optional Fields Populated',
     })
 
     it('Form Submisson Success', () => {
-        cy.get('#firstname').type('Paul')
-        cy.get('#lastname').type('Lynn')
-        cy.get('#email').type('paul.lynn@test.com')
-        cy.get('#phone').type('07777777777')
-        cy.get('#company').type('QE Labs')
-        cy.get('#postcode').type('WA14 1EP')
-        cy.get('select').select(1).should('have.value', '2')
-        cy.get('#feedback').type('I am providing some feedback to the feedback field')
-        cy.get('#submit').click()
-        cy.get('[class="MuiTypography-root feedback__sent MuiTypography-h6"]').invoke('text').then( text => {
-            expect(text).to.equal('Thank you for your feedback')
-        })
+        feedback
+            .fillFirstName('Paul')
+            .fillLastName('Lynn')
+            .fillEmail('paul.lynn@test.com')
+            .fillPhone('07777777777')
+            .fillCompany('QE Labs')
+            .fillPostcode('WA14 1EP')
+            .selectPriority(1)
+            .fillFeedback('I am providing some feedback to the feedback field')
+            .submit()
+            .expectThankYouMessage()
     })
 })

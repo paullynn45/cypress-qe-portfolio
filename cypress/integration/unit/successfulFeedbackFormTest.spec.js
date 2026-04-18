@@ -1,9 +1,11 @@
 /// <reference types="cypress" />
 
 import loginPage from "../../support/pageObjects/loginPage";
+import feedbackPage from "../../support/pageObjects/feedbackPage";
 
 describe("Successful Feedback Form Submission", function () {
     const login = new loginPage();
+    const feedback = new feedbackPage();
 
     const availablefixtures = [
         //First Profile of Valid Data
@@ -22,7 +24,7 @@ describe("Successful Feedback Form Submission", function () {
         context: "3",
       },
     ];
-    
+
     availablefixtures.forEach((afixture) => {
       describe(afixture.context, () => {
         beforeEach(function () {
@@ -32,28 +34,21 @@ describe("Successful Feedback Form Submission", function () {
             cy.fixture(afixture.name).as("validFeedbackFormSubmission");
         });
 
-        it("Valid Feedback Form Submission" + afixture.name, function () {
-            cy.get('#firstname').type(this.validFeedbackFormSubmission.firstName)
-            cy.get('#firstname').should('have.attr', 'aria-invalid', 'false')
-            cy.get('#lastname').type(this.validFeedbackFormSubmission.lastName)
-            cy.get('#lastname').should('have.attr', 'aria-invalid', 'false')
-            cy.get('#email').type(this.validFeedbackFormSubmission.emailAddress)
-            cy.get('#email').should('have.attr', 'aria-invalid', 'false')
-            cy.get('#phone').type(this.validFeedbackFormSubmission.phoneNumber)
-            cy.get('#phone').should('have.attr', 'aria-invalid', 'false')
-            cy.get('#company').type(this.validFeedbackFormSubmission.company)
-            cy.get('#company').should('have.attr', 'aria-invalid', 'false')
-            cy.get('#postcode').type(this.validFeedbackFormSubmission.postCode)
-            cy.get('#postcode').should('have.attr', 'aria-invalid', 'false')
-            cy.get('select').select(1).should('have.value', '2')
-            cy.get('#feedback').type(this.validFeedbackFormSubmission.yourFeeback)
-            cy.get('#feedback').should('have.attr', 'aria-invalid', 'false')
-            cy.get('#submit').should('be.enabled')
-            cy.get('#submit').click()
-            cy.get('[class="MuiTypography-root feedback__sent MuiTypography-h6"]').invoke('text').then( text => {
-                expect(text).to.equal('Thank you for your feedback')
-                })
-            })
+        it("Valid Feedback Form Submission " + afixture.name, function () {
+            feedback
+                .fillAllFields(this.validFeedbackFormSubmission)
+                .selectPriority(1)
+                .expectFieldValid('#firstname')
+                .expectFieldValid('#lastname')
+                .expectFieldValid('#email')
+                .expectFieldValid('#phone')
+                .expectFieldValid('#company')
+                .expectFieldValid('#postcode')
+                .expectFieldValid('#feedback')
+                .expectSubmitEnabled()
+                .submit()
+                .expectThankYouMessage()
         })
+      })
     })
 })

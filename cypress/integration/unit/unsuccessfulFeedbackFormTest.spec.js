@@ -1,9 +1,11 @@
 /// <reference types="cypress" />
 
 import loginPage from "../../support/pageObjects/loginPage";
+import feedbackPage from "../../support/pageObjects/feedbackPage";
 
 describe("Unsuccessful Feedback Form Submission", function () {
     const login = new loginPage();
+    const feedback = new feedbackPage();
 
     const availablefixtures = [
         //First Profile of Invalid Data
@@ -30,22 +32,21 @@ describe("Unsuccessful Feedback Form Submission", function () {
             login.signIn()
             cy.fixture(afixture.name).as("invalidFeedbackFormSubmission");
         });
-            it("Invalid Feedback Form Submission" + afixture.name, function () {
-            // Fill mandatory fields with valid values so submit-disabled
+        it("Invalid Feedback Form Submission" + afixture.name, function () {
+            // Fill mandatory fields with valid values so the submit-disabled
             // assertion proves the invalid email/phone/postcode are the cause.
-            cy.get('#firstname').type('Test')
-            cy.get('#lastname').type('User')
-            cy.get('#feedback').type('Test feedback content')
-
-            cy.get('#email').type(this.invalidFeedbackFormSubmission.emailAddress)
-            cy.get('#email').should('have.attr', 'aria-invalid', 'true')
-            cy.get('#phone').type(this.invalidFeedbackFormSubmission.phoneNumber)
-            cy.get('#phone').should('have.attr', 'aria-invalid', 'true')
-            cy.get('#postcode').type(this.invalidFeedbackFormSubmission.postCode)
-            cy.get('#postcode').should('have.attr', 'aria-invalid', 'true')
-            cy.get('#submit').should('be.disabled')
-            })
+            feedback
+                .fillFirstName('Test')
+                .fillLastName('User')
+                .fillFeedback('Test feedback content')
+                .fillEmail(this.invalidFeedbackFormSubmission.emailAddress)
+                .expectFieldInvalid('#email')
+                .fillPhone(this.invalidFeedbackFormSubmission.phoneNumber)
+                .expectFieldInvalid('#phone')
+                .fillPostcode(this.invalidFeedbackFormSubmission.postCode)
+                .expectFieldInvalid('#postcode')
+                .expectSubmitDisabled()
         })
+      })
     })
 })
-
