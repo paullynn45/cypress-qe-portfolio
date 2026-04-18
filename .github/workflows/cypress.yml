@@ -21,11 +21,11 @@ jobs:
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
-        env:
-          # react-scripts 3.x predates OpenSSL 3 — needed on Node 17+ and harmless on Node 16.
-          NODE_OPTIONS: --openssl-legacy-provider
         with:
-          start: npm start
+          # NODE_OPTIONS is scoped to the start command only — npm itself rejects
+          # --openssl-legacy-provider, so a job-level env: would break npm ci.
+          # The flag is only needed for react-scripts 3.x (webpack 4 + OpenSSL 3).
+          start: 'NODE_OPTIONS=--openssl-legacy-provider npm start'
           wait-on: 'http://localhost:3000'
           wait-on-timeout: 120
           browser: chrome
