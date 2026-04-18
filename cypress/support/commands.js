@@ -1,25 +1,25 @@
 // ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
+// Custom Cypress commands.
+// See https://on.cypress.io/custom-commands
 // ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+import loginPage from "./pageObjects/loginPage";
+
+// Default happy-path login using the validLoginCredentials fixture.
+// Use this in beforeEach hooks of any spec that needs to be inside the app
+// but is not itself testing login behaviour.
+Cypress.Commands.add('login', () => {
+    const login = new loginPage();
+    login.navigate();
+    login.login();
+    login.signIn();
+});
+
+// Explicit-credentials login for negative-path tests. Stays out of the
+// LoginPage POM because the POM is configured against the valid fixture.
+Cypress.Commands.add('loginAs', (userName, password) => {
+    cy.visit('/');
+    cy.get('#username').type(userName);
+    cy.get('#password').type(password);
+    cy.get('.signin-form__submit').click();
+});

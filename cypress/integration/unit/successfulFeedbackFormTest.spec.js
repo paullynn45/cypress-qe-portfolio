@@ -1,10 +1,8 @@
 /// <reference types="cypress" />
 
-import loginPage from "../../support/pageObjects/loginPage";
 import feedbackPage from "../../support/pageObjects/feedbackPage";
 
 describe("Successful Feedback Form Submission", function () {
-    const login = new loginPage();
     const feedback = new feedbackPage();
 
     const availablefixtures = [
@@ -28,9 +26,7 @@ describe("Successful Feedback Form Submission", function () {
     availablefixtures.forEach((afixture) => {
       describe(afixture.context, () => {
         beforeEach(function () {
-            login.navigate()
-            login.login()
-            login.signIn()
+            cy.login()
             cy.fixture(afixture.name).as("validFeedbackFormSubmission");
         });
 

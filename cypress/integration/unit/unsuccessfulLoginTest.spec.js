@@ -24,10 +24,7 @@ describe("Unsuccessful Login Invalid Credentials", function () {
             cy.fixture(afixture.name).as("invalidLoginCredentials");
         });
             it("Invalid Login Test" + afixture.name, function () {
-            cy.visit('/')
-            cy.get('#username').type(this.invalidLoginCredentials.userName)
-            cy.get('#password').type(this.invalidLoginCredentials.password)
-            cy.contains('Sign In').click()
+            cy.loginAs(this.invalidLoginCredentials.userName, this.invalidLoginCredentials.password)
             cy.get('#password-helper-text').invoke('text').then( text => {
                 expect(text).to.equal('Please enter a valid username/password')
                 })

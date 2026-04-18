@@ -1,27 +1,18 @@
 /// <reference types="cypress" />
 
-import loginPage from "../../support/pageObjects/loginPage";
 import feedbackPage from "../../support/pageObjects/feedbackPage";
 
-describe('End to End Journey Test Mandatory Fields Populated Only', () => {
-    const login = new loginPage();
+describe('End to End Journey — Mandatory Fields Only', () => {
     const feedback = new feedbackPage();
 
-    it('Login Success', function ()
-    {
-        login.navigate()
-        login.login()
-        login.signIn()
+    beforeEach(() => {
+        cy.login()
+        cy.fixture('validFeedbackData1').as('validFeedback')
     })
 
-    it('Form Submisson Success', () => {
+    it('submits the feedback form with mandatory fields only', function () {
         feedback
-            .fillFirstName('Paul')
-            .fillLastName('Lynn')
-            .fillEmail('paul.lynn@test.com')
-            .fillPhone('07777777777')
-            .fillPostcode('WA14 1EP')
-            .fillFeedback('I am providing some feedback to the feedback field')
+            .fillMandatoryFields(this.validFeedback)
             .submit()
             .expectThankYouMessage()
     })
