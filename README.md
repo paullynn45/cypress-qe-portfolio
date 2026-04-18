@@ -1,42 +1,121 @@
 # Cypress QE Portfolio
 
-A simple log in page with feedback form behind it.
+[![Cypress E2E](https://github.com/paullynn45/cypress-qe-portfolio/actions/workflows/cypress.yml/badge.svg)](https://github.com/paullynn45/cypress-qe-portfolio/actions/workflows/cypress.yml)
 
-To sign in, use the following (hard coded) values:
+A small React app — login screen plus a feedback form — used as a target for a Cypress test suite that demonstrates end-to-end test design patterns: page object model, fixture-driven data, custom commands, and CI-pipeline integration.
+
+The application itself is intentionally minimal; the focus is the **test code**.
+
+---
+
+## Tech stack
+
+- **App**: React 16, Material-UI 4, React Router 5
+- **Tests**: Cypress 9.5 (headless Chrome)
+- **CI**: GitHub Actions
+- **Local serving**: Docker + docker-compose
+
+---
+
+## Project structure
+
+```
+.
+├── src/                              # React app (login + feedback form)
+├── public/                           # Static assets
+├── cypress/
+│   ├── fixtures/                     # Valid + invalid test data profiles
+│   ├── integration/
+│   │   ├── unit/                     # Single-screen specs (login, feedback form)
+│   │   └── e2e/                      # Cross-screen user journeys
+│   └── support/
+│       ├── commands.js               # cy.login, cy.loginAs custom commands
+│       └── pageObjects/
+│           ├── loginPage.js
+│           └── feedbackPage.js
+├── .github/workflows/cypress.yml     # CI pipeline
+├── Dockerfile
+└── docker-compose.yml
+```
+
+---
+
+## Running locally
+
+### Prerequisites
+
+- Node 16 (`react-scripts 3.x` predates Node 17's OpenSSL change)
+- npm 8+
+
+### Install and start the app
+
+```bash
+npm install
+npm start
+```
+
+The app runs on [http://localhost:3000](http://localhost:3000).
+
+Sign in with the hard-coded credentials:
+
 ```
 Username: l.jenkins
 Password: hunter2
 ```
 
-The feedback form has validation to check that all required items are present, and phone, email and postcodes all look like they should. It doesn't actually do anything with the values, it just takes the user to a 'submitted' page. This is good enough for the test.
+### Run the Cypress suite
 
-## To run:
-`docker-compose up --build -d`
+In a second terminal, with the app running:
 
-## Testing
-`npm test` to execute tests
+```bash
+npm run cy:headless     # all specs, headless
+npm run cy:chrome       # all specs, headed Chrome
+npx cypress open        # interactive mode
+```
 
-## UI Tests
-Prequisites for local execution of the Cypress UI tests
+### Run via Docker
 
->npm intall
+```bash
+docker-compose up --build -d
+```
 
->npm start
+---
 
-Ensure the app is running successfully on [Localhost](http://localhost:3000) 
+## Test coverage
 
-Install Cypress Globally
+| Spec | Scenario |
+|---|---|
+| `unit/successfulLoginTest.js` | Valid credentials sign in and land on the feedback form |
+| `unit/unsuccessfulLoginTest.spec.js` | Three invalid-credential profiles surface the correct helper text |
+| `unit/successfulFeedbackFormTest.spec.js` | Three valid data profiles populate the form, pass field validation, and submit successfully |
+| `unit/unsuccessfulFeedbackFormTest.spec.js` | Three invalid data profiles flag email/phone/postcode as invalid and keep submit disabled |
+| `e2e/e2eJourneyMandatoryAndOptionalFields.js` | Full journey: login → fill all fields → submit → confirmation |
+| `e2e/e2eJourneyMandatoryFieldsOnly.js` | Full journey: login → fill only mandatory fields → submit → confirmation |
 
-> npm install cypress -g
+---
 
-For headless execution of the tests
+## Design decisions
 
-> npm run cy:headless 
+**Page Object Model.** `LoginPage` and `FeedbackPage` keep DOM mechanics out of specs. Each page exposes a fluent API (`feedback.fillEmail(value).expectFieldValid('#email')`) so specs read as test intent rather than a list of selectors.
 
-For browser execution of the tests
+**Fixture-driven data.** Each scenario class points to one or more JSON fixtures in `cypress/fixtures/`. Adding a fourth invalid-data profile is a one-file change with no spec edits. The `availablefixtures.forEach` pattern in the unit specs runs the same test logic over every profile.
 
-> npm run cy:chrome
+**Custom commands over inline setup.** `cy.login()` (happy path, default fixture credentials) and `cy.loginAs(user, pass)` (explicit credentials, used by negative-path login tests) live in `cypress/support/commands.js`. Specs that need an authenticated session call them in `beforeEach` and stay focused on the scenario under test.
 
-or
+**Semantic selectors over framework-generated class chains.** Earlier versions of these specs matched on Material-UI's auto-generated class strings (`MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom`) and on raw button text. Both are brittle to MUI upgrades and copy changes. Page objects now prefer stable component classes (`.signin-form__submit`) and `cy.contains()` against semantic content.
 
-> npx cypress open
+---
+
+## Known limitations and planned improvements
+
+- **Cypress 9.5 → 13.x**. Includes the migration to `cypress.config.js`, the `cypress/integration/` → `cypress/e2e/` folder move, and the `*.spec.js` → `*.cy.js` filename convention. Planned as a single dedicated change.
+- **Material-UI 4 / React 16**. The app uses now-deprecated versions. Out of scope for a QE portfolio piece, but flagged.
+- **No accessibility checks**. Adding `cypress-axe` would catch a11y regressions on the existing form.
+- **No visual regression**. Cypress Image Snapshot or Percy would fit cleanly given the small surface.
+- **No reporter**. Adding `mochawesome` would produce HTML test reports out of CI.
+
+---
+
+## Author
+
+Paul Lynn — [@paullynn45](https://github.com/paullynn45)
