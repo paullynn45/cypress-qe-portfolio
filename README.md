@@ -13,7 +13,7 @@ The application itself is intentionally minimal; the focus is the **test code**.
 - **App**: React 16, Material-UI 4, React Router 5
 - **Tests**: Cypress 9.5 (headless Chrome)
 - **CI**: GitHub Actions
-- **Local serving**: Docker + docker-compose
+- **Local serving**: Docker + Docker Compose
 
 ---
 
@@ -33,6 +33,8 @@ The application itself is intentionally minimal; the focus is the **test code**.
 │       └── pageObjects/
 │           ├── loginPage.js
 │           └── feedbackPage.js
+├── cypress.json                      # Cypress config + demo env defaults
+├── cypress.env.example.json          # Template for cypress.env.json (gitignored)
 ├── .github/workflows/cypress.yml     # CI pipeline
 ├── Dockerfile
 └── docker-compose.yml
