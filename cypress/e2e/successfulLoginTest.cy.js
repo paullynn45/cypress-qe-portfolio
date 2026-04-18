@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import loginPage from "../../support/pageObjects/loginPage";
+import loginPage from "../support/pageObjects/loginPage";
 
 describe('Successful Login Valid Credentials', () => {
     const login = new loginPage();

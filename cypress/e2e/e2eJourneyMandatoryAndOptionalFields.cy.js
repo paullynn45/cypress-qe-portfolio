@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import feedbackPage from "../../support/pageObjects/feedbackPage";
+import feedbackPage from "../support/pageObjects/feedbackPage";
 
 describe('End to End Journey — Mandatory and Optional Fields', () => {
     const feedback = new feedbackPage();
