@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import feedbackPage from "../../support/pageObjects/feedbackPage";
+import feedbackPage from "../support/pageObjects/feedbackPage";
 
 describe("Unsuccessful Feedback Form Submission", function () {
     const feedback = new feedbackPage();

@@ -11,7 +11,7 @@ The application itself is intentionally minimal; the focus is the **test code**.
 ## Tech stack
 
 - **App**: React 16, Material-UI 4, React Router 5
-- **Tests**: Cypress 9.5 (headless Chrome)
+- **Tests**: Cypress 13 (headless Chrome)
 - **CI**: GitHub Actions
 - **Local serving**: Docker + docker-compose
 
@@ -25,14 +25,14 @@ The application itself is intentionally minimal; the focus is the **test code**.
 ├── public/                           # Static assets
 ├── cypress/
 │   ├── fixtures/                     # Valid + invalid test data profiles
-│   ├── integration/
-│   │   ├── unit/                     # Single-screen specs (login, feedback form)
-│   │   └── e2e/                      # Cross-screen user journeys
+│   ├── e2e/                          # All Cypress specs (*.cy.js)
 │   └── support/
+│       ├── e2e.js                    # Auto-loaded before every spec
 │       ├── commands.js               # cy.login, cy.loginAs custom commands
 │       └── pageObjects/
 │           ├── loginPage.js
 │           └── feedbackPage.js
+├── cypress.config.js                 # Cypress configuration
 ├── .github/workflows/cypress.yml     # CI pipeline
 ├── Dockerfile
 └── docker-compose.yml
@@ -85,12 +85,12 @@ docker-compose up --build -d
 
 | Spec | Scenario |
 |---|---|
-| `unit/successfulLoginTest.js` | Valid credentials sign in and land on the feedback form |
-| `unit/unsuccessfulLoginTest.spec.js` | Three invalid-credential profiles surface the correct helper text |
-| `unit/successfulFeedbackFormTest.spec.js` | Three valid data profiles populate the form, pass field validation, and submit successfully |
-| `unit/unsuccessfulFeedbackFormTest.spec.js` | Three invalid data profiles flag email/phone/postcode as invalid and keep submit disabled |
-| `e2e/e2eJourneyMandatoryAndOptionalFields.js` | Full journey: login → fill all fields → submit → confirmation |
-| `e2e/e2eJourneyMandatoryFieldsOnly.js` | Full journey: login → fill only mandatory fields → submit → confirmation |
+| `successfulLoginTest.cy.js` | Valid credentials sign in and land on the feedback form |
+| `unsuccessfulLoginTest.cy.js` | Three invalid-credential profiles surface the correct helper text |
+| `successfulFeedbackFormTest.cy.js` | Three valid data profiles populate the form, pass field validation, and submit successfully |
+| `unsuccessfulFeedbackFormTest.cy.js` | Three invalid data profiles flag email/phone/postcode as invalid and keep submit disabled |
+| `e2eJourneyMandatoryAndOptionalFields.cy.js` | Full journey: login → fill all fields → submit → confirmation |
+| `e2eJourneyMandatoryFieldsOnly.cy.js` | Full journey: login → fill only mandatory fields → submit → confirmation |
 
 ---
 
@@ -108,7 +108,6 @@ docker-compose up --build -d
 
 ## Known limitations and planned improvements
 
-- **Cypress 9.5 → 13.x**. Includes the migration to `cypress.config.js`, the `cypress/integration/` → `cypress/e2e/` folder move, and the `*.spec.js` → `*.cy.js` filename convention. Planned as a single dedicated change.
 - **Material-UI 4 / React 16**. The app uses now-deprecated versions. Out of scope for a QE portfolio piece, but flagged.
 - **No accessibility checks**. Adding `cypress-axe` would catch a11y regressions on the existing form.
 - **No visual regression**. Cypress Image Snapshot or Percy would fit cleanly given the small surface.
