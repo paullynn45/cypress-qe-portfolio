@@ -2,7 +2,7 @@
 
 import loginPage from "../../support/pageObjects/loginPage";
 
-describe.only("Successful Feedback Form Submission", function () {
+describe("Successful Feedback Form Submission", function () {
     const login = new loginPage();
 
     const availablefixtures = [

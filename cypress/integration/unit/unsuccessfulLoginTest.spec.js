@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-describe.only("Unsuccessful Login Invalid Credentials", function () {
+describe("Unsuccessful Login Invalid Credentials", function () {
     const availablefixtures = [
         //Unsuccessful Login Username and Password Both Invalid
       {
@@ -14,7 +14,7 @@ describe.only("Unsuccessful Login Invalid Credentials", function () {
       },
       //Unsuccessful Login Invalid Username Valid Password
       {
-        name: "invalidLoginCredentials2",
+        name: "invalidLoginCredentials3",
         context: "3",
       },
     ];

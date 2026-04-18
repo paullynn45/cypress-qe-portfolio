@@ -2,7 +2,7 @@
 
 import loginPage from "../../support/pageObjects/loginPage";
 
-describe.only("Unsuccessful Feedback Form Submission", function () {
+describe("Unsuccessful Feedback Form Submission", function () {
     const login = new loginPage();
 
     const availablefixtures = [
@@ -31,6 +31,11 @@ describe.only("Unsuccessful Feedback Form Submission", function () {
             cy.fixture(afixture.name).as("invalidFeedbackFormSubmission");
         });
             it("Invalid Feedback Form Submission" + afixture.name, function () {
+            // Fill mandatory fields with valid values so submit-disabled
+            // assertion proves the invalid email/phone/postcode are the cause.
+            cy.get('#firstname').type('Test')
+            cy.get('#lastname').type('User')
+            cy.get('#feedback').type('Test feedback content')
 
             cy.get('#email').type(this.invalidFeedbackFormSubmission.emailAddress)
             cy.get('#email').should('have.attr', 'aria-invalid', 'true')
