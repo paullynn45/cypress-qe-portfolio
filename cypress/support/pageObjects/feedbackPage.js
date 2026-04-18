@@ -86,9 +86,9 @@ export class feedbackPage {
     }
 
     expectThankYouMessage() {
-        cy.get('[class="MuiTypography-root feedback__sent MuiTypography-h6"]').invoke('text').then(text => {
-            expect(text).to.equal('Thank you for your feedback')
-        })
+        // Match by text rather than the auto-generated MUI class chain,
+        // which would break on any MUI version bump or styling change.
+        cy.contains('Thank you for your feedback').should('be.visible')
         return this
     }
 }

@@ -11,13 +11,11 @@ describe('Successful Login Valid Credentials', () => {
         })
     })
 
-    it('Login Success', function ()       
+    it('Login Success', function ()
     {
         login.navigate()
         login.login()
         login.signIn()
-        cy.get('[class="MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom"]').invoke('text').then( text => {
-            expect(text).to.equal('Feedback Form')
-        })
+        login.expectFeedbackFormVisible()
     })
 })

@@ -14,7 +14,14 @@ export class loginPage {
         }
 
     signIn() {
-        cy.contains('Sign In').click()
+        // Use the stable component class instead of matching button text,
+        // which is brittle to copy changes and ambiguous if the same text
+        // appears elsewhere on the page.
+        cy.get('.signin-form__submit').click()
+        }
+
+    expectFeedbackFormVisible() {
+        cy.contains('Feedback Form').should('be.visible')
         }
     }
     
