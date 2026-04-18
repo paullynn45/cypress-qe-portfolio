@@ -108,7 +108,7 @@ docker-compose up --build -d
 
 ## Known limitations and planned improvements
 
-- **Cypress 9.5 → 13.x**. Includes the migration to `cypress.config.js`, the `cypress/integration/` → `cypress/e2e/` folder move, and the `*.spec.js` → `*.cy.js` filename convention. Planned as a single dedicated change.
+- **Cypress 9.5 → 13.x**. Includes the migration to `cypress.config.js`, the `cypress/integration/` → `cypress/e2e/` folder move, and the `*.spec.js` → `*.cy.js` filename convention. Two caveats for whoever attempts it: regenerate `package-lock.json` with `npm install --userconfig=/dev/null` to avoid private-registry URLs leaking in from `~/.npmrc`, and do a surgical lockfile update (not a from-scratch regen) — a clean regen pulls newer transitives that trip a `react-dev-utils` dev-server bug on `noopServiceWorkerMiddleware`.
 - **Material-UI 4 / React 16**. The app uses now-deprecated versions. Out of scope for a QE portfolio piece, but flagged.
 - **No accessibility checks**. Adding `cypress-axe` would catch a11y regressions on the existing form.
 - **No visual regression**. Cypress Image Snapshot or Percy would fit cleanly given the small surface.
