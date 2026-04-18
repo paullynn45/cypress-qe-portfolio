@@ -1,10 +1,37 @@
-version: '3'
+version: '3.8'
 
+# Full app + Cypress orchestration. One `docker-compose up` builds the app
+# image, boots it, waits for it to pass a healthcheck, then runs the Cypress
+# suite against it in the official cypress/included container. No Node needed
+# on the host.
 services:
-  automation-test:
-    image: automation-test
+  app:
     build: .
+    container_name: cypress-qe-app
     ports:
-      - 8080:8080
-    command: "npm run serve"
-    
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:3000 || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+
+  cypress:
+    image: cypress/included:9.7.0
+    container_name: cypress-qe-tests
+    # Block on the app's healthcheck — no sleep/race.
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      # Override the baseUrl via Cypress.env (Docker-internal DNS uses service name).
+      - CYPRESS_baseUrl=http://app:3000
+      # Test credentials resolve through the same Cypress.env stack as CI.
+      - CYPRESS_TEST_USER=l.jenkins
+      - CYPRESS_TEST_PASS=hunter2
+    working_dir: /e2e
+    volumes:
+      # Mount only what Cypress needs so iteration doesn't require rebuilding.
+      - ./cypress:/e2e/cypress
+      - ./cypress.json:/e2e/cypress.json

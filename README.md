@@ -77,11 +77,16 @@ npx cypress open        # interactive mode
 
 Tests read the sign-in credentials through `Cypress.env('TEST_USER')` / `Cypress.env('TEST_PASS')`. Demo defaults live in `cypress.json`. To run against different credentials without editing tracked files, copy `cypress.env.example.json` to `cypress.env.json` (gitignored) and set your own values — or export `CYPRESS_TEST_USER` / `CYPRESS_TEST_PASS` in your shell. CI injects them as env vars on the `cypress-io/github-action` step.
 
-### Run via Docker
+### Run via Docker (app + Cypress, orchestrated)
+
+The repo includes a full Cypress-in-Docker setup. One command builds the app image, boots the app container, waits for it to pass a healthcheck, then runs the Cypress suite in an isolated `cypress/included` container against it. **No Node install required on the host** — just Docker.
 
 ```bash
-docker-compose up --build -d
+docker-compose up --build --abort-on-container-exit
+docker-compose down
 ```
+
+The cypress container reaches the app at `http://app:3000` via Docker's service-name DNS and reads its credentials from `CYPRESS_TEST_USER` / `CYPRESS_TEST_PASS` env vars set in `docker-compose.yml`. Three independent test-execution paths — `npm start` + local Cypress, GitHub Actions CI, and `docker-compose up` — all converge on the same suite.
 
 ---
 
